@@ -22,8 +22,8 @@ async function startServer() {
     try {
       const rawKey = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY || "";
       const apiKey = rawKey.replace(/^["']|["']$/g, "").trim();
-      if (!apiKey) {
-          return res.status(500).json({ error: "GEMINI_API_KEY is not configured on the server." });
+      if (!apiKey || apiKey === "dummy") {
+          return res.status(400).json({ error: "API key is missing or invalid. Please check your AI Studio Settings." });
       }
 
       const localAi = new GoogleGenAI({
@@ -47,7 +47,11 @@ async function startServer() {
       res.json({ text: response.text });
     } catch (error: any) {
       console.warn("Gemini Handshake Failure (handled):", error.message);
-      res.status(500).json({ error: error.message });
+      if (error.message && error.message.includes("API key not valid")) {
+        res.status(401).json({ error: "Your Gemini API key is invalid. Please check your AI Studio Settings and paste a valid key." });
+      } else {
+        res.status(500).json({ error: error.message });
+      }
     }
   });
 

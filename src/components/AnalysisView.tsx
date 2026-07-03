@@ -163,8 +163,8 @@ export default function AnalysisView({ loggedSessions, userSettings }: AnalysisV
             <h4 className="text-base font-bold text-white tracking-tight">Time Share Distribution</h4>
             <p className="text-xs text-zinc-400 mt-0.5 truncate">Stream category breakdown ratios</p>
           </div>
-          <div className="flex flex-col md:flex-row items-center justify-around gap-6 py-4">
-            <div className="relative w-32 h-32 md:w-40 md:h-40 shrink-0 mx-auto">
+          <div className="flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-8 py-4">
+            <div className="relative w-40 h-40 shrink-0 mx-auto sm:mx-0">
               {totalMinutes > 0 ? (
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 32 32">
                   {pieSlices.map((slice, idx) => {
@@ -187,14 +187,14 @@ export default function AnalysisView({ loggedSessions, userSettings }: AnalysisV
                   })}
                 </svg>
               ) : (
-                <div className="w-full h-full rounded-full border border-dashed border-white/10 flex items-center justify-center text-xs text-zinc-500">No logs saved</div>
+                <div className="w-full h-full rounded-full border border-dashed border-white/10 flex items-center justify-center"></div>
               )}
-              <div className="absolute inset-7 bg-[#0b0f19] rounded-full border border-white/5 flex flex-col items-center justify-center text-center">
+              <div className="absolute inset-4 sm:inset-6 bg-[#0b0f19] rounded-full border border-white/5 flex flex-col items-center justify-center text-center shadow-inner z-10">
                 <span className="text-xs text-zinc-400 uppercase font-bold tracking-wider">Total</span>
                 <span className="text-base font-black text-white mt-0.5">{totalMinutes}m</span>
               </div>
             </div>
-            <div className="flex flex-col gap-3 w-full md:w-auto">
+            <div className="flex flex-col gap-3 w-full sm:flex-1">
               {pieSlices.map(slice => (
                 <div key={slice.key} className="flex items-center gap-3 text-xs bg-black/20 px-3 py-2 rounded-xl border border-white/5">
                   <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: slice.config.color }} />

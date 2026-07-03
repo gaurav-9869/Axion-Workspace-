@@ -84,7 +84,7 @@ User input message: "${safeUserText}"`;
       let assistantText = "";
       const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
       
-      if (apiKey) {
+      if (apiKey && apiKey !== "dummy") {
           const ai = new GoogleGenAI({ apiKey });
           const response = await ai.models.generateContent({
               model: 'gemini-2.5-flash',
@@ -106,6 +106,9 @@ User input message: "${safeUserText}"`;
               const errData = await res.json();
               serverError = errData.error || serverError;
             } catch(e) {}
+            if (serverError.includes("API key not valid") || serverError.includes("API_KEY_INVALID") || serverError.includes("GEMINI_API_KEY is not configured")) {
+              throw new Error("Your Gemini API key is missing or invalid.");
+            }
             throw new Error(`Status ${res.status}: ${serverError}`);
           }
 
@@ -167,7 +170,7 @@ User input message: "${safeUserText}"`;
     } catch (err: any) {
       console.warn("Gemini Handshake Failure (handled):", err.message || err);
       const msg = err.message || String(err);
-      setMessages(prev => [...prev, { sender: 'assistant', text: `API Error: ${msg}. Please ensure your Gemini API key is configured correctly in the AI Studio Settings.` }]);
+      setMessages(prev => [...prev, { sender: 'assistant', text: `${msg.includes("API key is missing") ? msg : "API Error: " + msg} Please ensure your Gemini API key is configured correctly in the AI Studio Settings.` }]);
     } finally {
       setIsLoading(false);
     }
