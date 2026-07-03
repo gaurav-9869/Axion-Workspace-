@@ -92,6 +92,11 @@ User input message: "${safeUserText}"`;
           });
           assistantText = response.text || "Let's try rephrasing that request.";
       } else {
+          const isGitHubPages = window.location.hostname.includes("github.io");
+          if (isGitHubPages) {
+              throw new Error("Missing Gemini API Key. Please add your API key to your GitHub Repository Secrets as VITE_GEMINI_API_KEY and re-run your deployment.");
+          }
+
           const res = await fetch(`/api/gemini/generate`, {
             method: 'POST',
             headers: { 
@@ -106,7 +111,7 @@ User input message: "${safeUserText}"`;
               const errData = await res.json();
               serverError = errData.error || serverError;
             } catch(e) {
-              if (res.status === 404) {
+              if (res.status === 404 || res.status === 405) {
                  serverError = "Backend API not found. If you are hosting on GitHub Pages, backend APIs are not supported. Please provide VITE_GEMINI_API_KEY in your deployment environment.";
               }
             }
