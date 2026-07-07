@@ -83,13 +83,15 @@ export default function ArchiveView() {
   }, []);
 
   const handleEditSave = () => {
-    if (!editFormData || !selectedDate) return;
+    if (!editFormData) return;
+    const targetDate = (editFormData as any).logDate || selectedDate;
+    if (!targetDate) return;
     
-    const updatedLogs = allLogsByDate[selectedDate].map(l => l.id === editFormData.id ? editFormData : l);
-    const newLogsByDate = { ...allLogsByDate, [selectedDate]: updatedLogs };
+    const updatedLogs = allLogsByDate[targetDate].map(l => l.id === editFormData.id ? editFormData : l);
+    const newLogsByDate = { ...allLogsByDate, [targetDate]: updatedLogs };
     
     setAllLogsByDate(newLogsByDate);
-    localStorage.setItem(`axion_logs_${selectedDate}`, JSON.stringify(updatedLogs));
+    localStorage.setItem(`axion_logs_${targetDate}`, JSON.stringify(updatedLogs));
     
     setEditingLogId(null);
     setEditFormData(null);
@@ -370,13 +372,13 @@ export default function ArchiveView() {
                                         )}
                                         
                                         {(!log.systemRefinement || !log.notes || !log.frictionAnalysis) && (
-                                            <div 
+                                            <button 
                                                 onClick={() => { setEditingLogId(log.id); setEditFormData({ ...log }); }}
                                                 className="mt-2 flex items-center gap-2 p-2.5 rounded-xl border border-dashed border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 text-xs font-semibold text-zinc-400 hover:text-zinc-200 transition-colors cursor-pointer group w-max"
                                             >
                                                 <span className="material-symbols-outlined text-[16px] group-hover:text-amber-400 transition-colors">add_circle</span>
                                                 Add missing { [!log.systemRefinement ? 'System Refinement' : null, !log.notes ? 'Notes' : null, !log.frictionAnalysis ? 'Friction Analysis' : null].filter(Boolean).join(', ') }
-                                            </div>
+                                            </button>
                                         )}
 
 
